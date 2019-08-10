@@ -1,0 +1,86 @@
+{
+  "name": "control-snippets",
+  "displayName": "Control Snippets",
+  "description": "Disable or enable VS Code's built-in snippets and manually installed snippets from extensions.",
+  "version": "1.0.0",
+  "publisher": "svipas",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/svipas/vscode-control-snippets.git"
+  },
+  "bugs": {
+    "url": "https://github.com/svipas/vscode-control-snippets/issues"
+  },
+  "icon": "icon.png",
+  "engines": {
+    "vscode": "^1.36.0"
+  },
+  "categories": [
+    "Snippets"
+  ],
+  "activationEvents": [
+    "onCommand:extension.control-snippets"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.control-snippets",
+        "title": "Control Snippets"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^10.14.15",
+    "@types/vscode": "^1.36.0",
+    "typescript": "^3.5.3"
+  },
+  "keywords": [
+    "enable",
+    "disable",
+    "global",
+    "builtin",
+    "built-in",
+    "code",
+    "control",
+    "snippet",
+    "snippets",
+    "extension",
+    "extensions",
+    "javascript",
+    "js",
+    "jsx",
+    "flow",
+    "typescript",
+    "ts",
+    "json",
+    "html",
+    "vue",
+    "angular",
+    "css",
+    "less",
+    "scss",
+    "styled-components",
+    "styled-jsx",
+    "graphql",
+    "markdown",
+    "md",
+    "commonmark",
+    "mdx",
+    "yaml",
+    "yml",
+    "elm",
+    "java",
+    "php",
+    "postgresql",
+    "sql",
+    "ruby",
+    "swift",
+    "toml"
+  ]
+}
