@@ -16,7 +16,7 @@ Install through VS Code extensions, search for `Control Snippets` by `Benas Svip
 
 ## FAQ
 
-### I still see VS Code's built-in snippets and manually installed snippets from extensions
+### I still see snippets
 
 &#x26a0; Reload or restart of VS Code is required after disable or enable snippets from extensions to take effect.
 
