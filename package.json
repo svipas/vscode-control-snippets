@@ -16,7 +16,7 @@
     "vscode": "^1.36.0"
   },
   "categories": [
-    "Snippets"
+    "Other"
   ],
   "activationEvents": [
     "onCommand:extension.control-snippets"
