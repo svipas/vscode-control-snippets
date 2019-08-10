@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 - Add `LICENSE` file.
+- Update `README`.
 
 ## 1.0.1 (August 10, 2019)
 
