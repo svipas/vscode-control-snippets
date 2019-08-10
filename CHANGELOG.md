@@ -1,3 +1,7 @@
+## [Unreleased]
+
+- Add `LICENSE` file.
+
 ## 1.0.1 (August 10, 2019)
 
 - Add image of how extension looks like.
