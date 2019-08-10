@@ -29,7 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.showQuickPick(quickPickItems, {
           canPickMany: true,
           ignoreFocusOut: true,
-          placeHolder: 'Select extension whose snippets will be disabled or enabled'
+          placeHolder: 'Select extension'
         })
       );
 
