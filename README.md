@@ -6,7 +6,7 @@ Disable or enable VS Code's built-in snippets and manually installed snippets fr
 
 ## Installation
 
-Install through VS Code extensions, search for `Control Snippets` by `Benas Svipas`.
+Install through VS Code extensions, search for `Control Snippets` by `Benas Svipas`. _If you can't find extension by name try to search by publisher name._
 
 ## Usage
 
