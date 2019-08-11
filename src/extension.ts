@@ -4,12 +4,18 @@ import { join } from 'path';
 
 interface Extension {
   id: string;
+  name: string;
+  description: string;
   path: string;
   packageJSON: ExtensionPackageJSON;
   isEnabled: boolean; // read extension package.json to know if snippet is disabled or enabled
+  isBuiltin: boolean; // built-in extension
 }
 
 interface ExtensionPackageJSON {
+  name: string;
+  publisher: string;
+  displayName?: string;
   contributes: {
     snippets?: any;
     snippets_disabled?: any;
@@ -22,14 +28,19 @@ export function activate(context: vscode.ExtensionContext) {
       const quickPickItems: vscode.QuickPickItem[] = [];
       const extensions = await getAllExtensions();
       extensions.forEach(ext => {
-        quickPickItems.push({ label: ext.id, description: ext.path, picked: ext.isEnabled });
+        quickPickItems.push({
+          label: ext.name,
+          description: ext.description,
+          picked: ext.isEnabled
+        });
       });
 
       const selectedQuickPickValues = await promisifyThenable(
         vscode.window.showQuickPick(quickPickItems, {
           canPickMany: true,
           ignoreFocusOut: true,
-          placeHolder: 'Select extension'
+          matchOnDescription: true,
+          placeHolder: 'Select extension whose snippets to disable or enable'
         })
       );
 
@@ -56,7 +67,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       // Only selected values from quick pick
       for (const value of selectedQuickPickValues) {
-        const ext = extensions.find(ext => ext.id === value.label);
+        const ext = extensions.find(ext => ext.id === getExtensionIdFromDescription(value.description));
         if (!ext) {
           continue;
         }
@@ -132,10 +143,19 @@ async function getAllExtensions(): Promise<Extension[]> {
       continue;
     }
 
+    const isBuiltin = packageJSON.publisher === 'vscode';
+    let name = packageJSON.name;
+    if (!isBuiltin && packageJSON.displayName && packageJSON.displayName !== '%displayName%') {
+      name = packageJSON.displayName;
+    }
+
     const extension: Extension = {
       id: ext.id,
       path: ext.extensionPath,
       isEnabled: null as any,
+      description: `${ext.id} ${isBuiltin ? '(built-in)' : '(manually installed)'}`,
+      isBuiltin,
+      name,
       packageJSON
     };
 
@@ -203,4 +223,20 @@ function enableExtension(extension: Extension): Promise<void> {
   packageJSON.contributes.snippets = packageJSON.contributes.snippets_disabled;
   packageJSON.contributes.snippets_disabled = undefined;
   return writeJSON(join(extension.path, 'package.json'), packageJSON);
+}
+
+function getExtensionIdFromDescription(description: string | undefined): string | null {
+  if (!description) {
+    return null;
+  }
+
+  if (description.includes('(built-in)')) {
+    return description.slice(0, description.indexOf('(built-in)') - 1);
+  }
+
+  if (description.includes('(manually installed)')) {
+    return description.slice(0, description.indexOf('(manually installed)') - 1);
+  }
+
+  return null;
 }
