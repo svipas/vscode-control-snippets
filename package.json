@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@types/node": "^10.14.15",
-    "@types/vscode": "^1.36.0",
+    "@types/vscode": "^1.30.0",
     "typescript": "^3.5.3"
   },
   "keywords": [
