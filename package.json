@@ -2,7 +2,7 @@
   "name": "control-snippets",
   "displayName": "Control Snippets",
   "description": "Disable or enable VS Code's built-in snippets and manually installed snippets from extensions.",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "publisher": "svipas",
   "repository": {
     "type": "git",
