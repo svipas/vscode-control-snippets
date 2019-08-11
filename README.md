@@ -22,11 +22,11 @@ Install through VS Code extensions, search for `Control Snippets` by `Benas Svip
 
 ### I got _"Extensions have been modified on disk. Please reload the window."_ message
 
-If you got **"Extensions have been modified on disk. Please reload the window."** message that means VS Code detected changes in extensions and reload of VS Code is required. After reload of VS Code you will not get that message and snippets would be enabled or disabled.
+If you got **"Extensions have been modified on disk. Please reload the window."** message that means VS Code detected changes in extensions and reload of VS Code is required. After reload of VS Code you will not get that message anymore and snippets would be enabled or disabled.
 
 ### After VS Code update
 
-After VS Code update you will probably have to repeat same steps you did before to disable or enable specific snippets for extensions.
+You will probably have to repeat same steps you did before to disable or enable snippets for extensions.
 
 ## Contributing
 
