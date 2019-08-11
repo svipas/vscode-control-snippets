@@ -2,6 +2,7 @@
 
 - Add `LICENSE` file.
 - Update `README`.
+- Add more extension categories in `package.json`.
 
 ## 1.0.1 (August 10, 2019)
 
