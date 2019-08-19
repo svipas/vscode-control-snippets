@@ -153,7 +153,7 @@ async function getAllExtensions(): Promise<Extension[]> {
       id: ext.id,
       path: ext.extensionPath,
       isEnabled: null as any,
-      description: `${ext.id} ${isBuiltin ? '(built-in)' : '(manually installed)'}`,
+      description: `${ext.id} ${isBuiltin ? '(built-in)' : '(installed)'}`,
       isBuiltin,
       name,
       packageJSON
@@ -234,8 +234,8 @@ function getExtensionIdFromDescription(description: string | undefined): string 
     return description.slice(0, description.indexOf('(built-in)') - 1);
   }
 
-  if (description.includes('(manually installed)')) {
-    return description.slice(0, description.indexOf('(manually installed)') - 1);
+  if (description.includes('(installed)')) {
+    return description.slice(0, description.indexOf('(installed)') - 1);
   }
 
   return null;
