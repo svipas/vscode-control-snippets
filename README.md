@@ -28,6 +28,15 @@ If you got **"Extensions have been modified on disk. Please reload the window."*
 
 You will probably have to repeat same steps you did before to disable or enable snippets for extensions.
 
+### Remote machine shows only few extensions
+
+If you're connected to a remote machine you probably will not see all extensions as you see working locally because VS Code disables a lot of built-in extensions while connected remotely.
+
+### Emoji meaning
+
+- 🔋- extension runs where the UI (window) runs.
+- 🔌- extension runs remotely.
+
 ## Contributing
 
 Feel free to open issues or PRs!
