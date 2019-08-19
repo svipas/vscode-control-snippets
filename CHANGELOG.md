@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+## 1.2.0 (August 19, 2019)
+
+- Instead of `(manually installed)` show `(installed)`.
+- If extension is local show 🔋emoji, if extension is remote show 🔌emoji.
+- Update `README.md`.
+- Update image of how extension looks like.
+
 ## 1.1.0 (August 11, 2019)
 
 - Add `LICENSE` file.
