@@ -9,7 +9,6 @@ interface Extension {
   path: string;
   packageJSON: ExtensionPackageJSON;
   isEnabled: boolean; // read extension package.json to know if snippet is disabled or enabled
-  isBuiltin: boolean; // built-in extension
 }
 
 interface ExtensionPackageJSON {
@@ -144,6 +143,7 @@ async function getAllExtensions(): Promise<Extension[]> {
     }
 
     const isBuiltin = packageJSON.publisher === 'vscode';
+    const emoji = ext.extensionKind === vscode.ExtensionKind.UI ? '🔋' : '🔌';
     let name = packageJSON.name;
     if (!isBuiltin && packageJSON.displayName && packageJSON.displayName !== '%displayName%') {
       name = packageJSON.displayName;
@@ -153,8 +153,7 @@ async function getAllExtensions(): Promise<Extension[]> {
       id: ext.id,
       path: ext.extensionPath,
       isEnabled: null as any,
-      description: `${ext.id} ${isBuiltin ? '(built-in)' : '(installed)'}`,
-      isBuiltin,
+      description: `${ext.id} (${isBuiltin ? 'built-in' : 'installed'}) ${emoji}`,
       name,
       packageJSON
     };
@@ -230,12 +229,12 @@ function getExtensionIdFromDescription(description: string | undefined): string 
     return null;
   }
 
-  if (description.includes('(built-in)')) {
-    return description.slice(0, description.indexOf('(built-in)') - 1);
+  if (description.includes('built-in')) {
+    return description.slice(0, description.indexOf('built-in') - 1);
   }
 
-  if (description.includes('(installed)')) {
-    return description.slice(0, description.indexOf('(installed)') - 1);
+  if (description.includes('installed')) {
+    return description.slice(0, description.indexOf('installed') - 1);
   }
 
   return null;
