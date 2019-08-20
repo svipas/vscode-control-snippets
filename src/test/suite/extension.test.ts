@@ -1,7 +1,17 @@
+import * as vscode from 'vscode';
 import * as assert from 'assert';
 import { getAllExtensions, getExtensionIdFromDescription } from '../../extension';
 
 suite('Extension', () => {
+  test('Control Snippets', done => {
+    const cancellationTokenSource = new vscode.CancellationTokenSource();
+    vscode.commands.executeCommand('extension.control-snippets', cancellationTokenSource.token);
+    setTimeout(() => {
+      cancellationTokenSource.cancel();
+      done();
+    }, 1000);
+  });
+
   test('getAllExtensions()', async () => {
     const extensions = await getAllExtensions();
     extensions.forEach(ext => {

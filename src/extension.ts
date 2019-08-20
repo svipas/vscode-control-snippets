@@ -1,6 +1,6 @@
-import * as vscode from 'vscode';
 import { readFile, writeFile } from 'fs';
 import { join } from 'path';
+import * as vscode from 'vscode';
 
 interface Extension {
   id: string;
@@ -22,110 +22,122 @@ interface ExtensionPackageJSON {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-  const disposable = vscode.commands.registerCommand('extension.control-snippets', async () => {
-    try {
-      const quickPickItems: vscode.QuickPickItem[] = [];
-      const extensions = await getAllExtensions();
-      extensions.forEach(ext => {
-        quickPickItems.push({
-          label: ext.name,
-          description: ext.description,
-          picked: ext.isEnabled
+  const disposable = vscode.commands.registerCommand(
+    'extension.control-snippets',
+    async (args?: [vscode.CancellationToken?]) => {
+      try {
+        let cancellationToken;
+        if (args && args[0]) {
+          cancellationToken = args[0];
+        }
+
+        const quickPickItems: vscode.QuickPickItem[] = [];
+        const extensions = await getAllExtensions();
+        extensions.forEach(ext => {
+          quickPickItems.push({
+            label: ext.name,
+            description: ext.description,
+            picked: ext.isEnabled
+          });
         });
-      });
 
-      const selectedQuickPickValues = await promisifyThenable(
-        vscode.window.showQuickPick(quickPickItems, {
-          canPickMany: true,
-          ignoreFocusOut: true,
-          matchOnDescription: true,
-          placeHolder: 'Select extension whose snippets to disable or enable'
-        })
-      );
-
-      // Canceled by user
-      if (!selectedQuickPickValues) {
-        return;
-      }
-
-      const enabledExtensions: Extension[] = [];
-      const disabledExtensions: Extension[] = [];
-
-      // Nothing was selected
-      if (selectedQuickPickValues.length === 0) {
-        for (const ext of extensions) {
-          // Extension is already disabled
-          if (!ext.isEnabled || ext.packageJSON.contributes.snippets_disabled) {
-            continue;
-          }
-
-          await disableExtension(ext);
-          disabledExtensions.push(ext);
-        }
-      }
-
-      // Only selected values from quick pick
-      for (const value of selectedQuickPickValues) {
-        const ext = extensions.find(ext => ext.id === getExtensionIdFromDescription(value.description));
-        if (!ext) {
-          continue;
-        }
-
-        // Extension is already enabled
-        if (ext.isEnabled || ext.packageJSON.contributes.snippets) {
-          enabledExtensions.push(ext);
-          continue;
-        }
-
-        await enableExtension(ext);
-        enabledExtensions.push(ext);
-      }
-
-      // Disable extensions by checking difference between disabled/enabled extensions from the quick pick
-      if (disabledExtensions.length !== extensions.length) {
-        for (const ext of extensions) {
-          const isEnabledExtensionFromQuickPick = enabledExtensions.find(val => val.id === ext.id);
-          if (isEnabledExtensionFromQuickPick) {
-            continue;
-          }
-
-          const isDisabledExtensionFromQuickPick = disabledExtensions.find(val => val.id === ext.id);
-          if (isDisabledExtensionFromQuickPick) {
-            continue;
-          }
-
-          // Extension is already disabled
-          if (!ext.isEnabled || ext.packageJSON.contributes.snippets_disabled) {
-            continue;
-          }
-
-          await disableExtension(ext);
-        }
-      }
-
-      const reloadModalResponse = await promisifyThenable(
-        vscode.window.showInformationMessage(
-          'To disable or enable snippets from extensions reload is required.',
-          { modal: true },
-          ...([{ title: 'Cancel', isCloseAffordance: true }, { title: 'Reload' }] as vscode.MessageItem[])
-        )
-      );
-
-      if (!reloadModalResponse) {
-        return;
-      }
-
-      if (reloadModalResponse.title === 'Reload') {
-        vscode.commands.executeCommand('workbench.action.reloadWindow');
-      } else {
-        vscode.window.showWarningMessage(
-          'Note: Reload or restart of VS Code is required after disable or enable snippets from extensions to take effect.'
+        const selectedQuickPickValues = await promisifyThenable(
+          vscode.window.showQuickPick(
+            quickPickItems,
+            {
+              canPickMany: true,
+              ignoreFocusOut: true,
+              matchOnDescription: true,
+              placeHolder: 'Select extension whose snippets to disable or enable'
+            },
+            cancellationToken
+          )
         );
+
+        // Canceled by user
+        if (!selectedQuickPickValues) {
+          return;
+        }
+
+        const enabledExtensions: Extension[] = [];
+        const disabledExtensions: Extension[] = [];
+
+        // Nothing was selected
+        if (selectedQuickPickValues.length === 0) {
+          for (const ext of extensions) {
+            // Extension is already disabled
+            if (!ext.isEnabled || ext.packageJSON.contributes.snippets_disabled) {
+              continue;
+            }
+
+            await disableExtension(ext);
+            disabledExtensions.push(ext);
+          }
+        }
+
+        // Only selected values from quick pick
+        for (const value of selectedQuickPickValues) {
+          const ext = extensions.find(ext => ext.id === getExtensionIdFromDescription(value.description));
+          if (!ext) {
+            continue;
+          }
+
+          // Extension is already enabled
+          if (ext.isEnabled || ext.packageJSON.contributes.snippets) {
+            enabledExtensions.push(ext);
+            continue;
+          }
+
+          await enableExtension(ext);
+          enabledExtensions.push(ext);
+        }
+
+        // Disable extensions by checking difference between disabled/enabled extensions from the quick pick
+        if (disabledExtensions.length !== extensions.length) {
+          for (const ext of extensions) {
+            const isEnabledExtensionFromQuickPick = enabledExtensions.find(val => val.id === ext.id);
+            if (isEnabledExtensionFromQuickPick) {
+              continue;
+            }
+
+            const isDisabledExtensionFromQuickPick = disabledExtensions.find(val => val.id === ext.id);
+            if (isDisabledExtensionFromQuickPick) {
+              continue;
+            }
+
+            // Extension is already disabled
+            if (!ext.isEnabled || ext.packageJSON.contributes.snippets_disabled) {
+              continue;
+            }
+
+            await disableExtension(ext);
+          }
+        }
+
+        const reloadModalResponse = await promisifyThenable(
+          vscode.window.showInformationMessage(
+            'To disable or enable snippets from extensions reload is required.',
+            { modal: true },
+            ...([{ title: 'Cancel', isCloseAffordance: true }, { title: 'Reload' }] as vscode.MessageItem[])
+          )
+        );
+
+        if (!reloadModalResponse) {
+          return;
+        }
+
+        if (reloadModalResponse.title === 'Reload') {
+          vscode.commands.executeCommand('workbench.action.reloadWindow');
+        } else {
+          vscode.window.showWarningMessage(
+            'Note: Reload or restart of VS Code is required after disable or enable snippets from extensions to take effect.'
+          );
+        }
+      } catch (err) {
+        vscode.window.showErrorMessage(err);
       }
-    } catch (err) {
-      vscode.window.showErrorMessage(err);
     }
-  });
+  );
 
   context.subscriptions.push(disposable);
 }
