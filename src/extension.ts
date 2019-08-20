@@ -132,7 +132,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 export function deactivate() {}
 
-async function getAllExtensions(): Promise<Extension[]> {
+export async function getAllExtensions(): Promise<Extension[]> {
   const extensions: Extension[] = [];
 
   for (const ext of vscode.extensions.all) {
@@ -224,17 +224,17 @@ function enableExtension(extension: Extension): Promise<void> {
   return writeJSON(join(extension.path, 'package.json'), packageJSON);
 }
 
-function getExtensionIdFromDescription(description: string | undefined): string | null {
+export function getExtensionIdFromDescription(description: string | undefined): string | null {
   if (!description) {
     return null;
   }
 
   if (description.includes('built-in')) {
-    return description.slice(0, description.indexOf('built-in') - 1);
+    return description.slice(0, description.indexOf('(built-in)') - 1);
   }
 
   if (description.includes('installed')) {
-    return description.slice(0, description.indexOf('installed') - 1);
+    return description.slice(0, description.indexOf('(installed)') - 1);
   }
 
   return null;
