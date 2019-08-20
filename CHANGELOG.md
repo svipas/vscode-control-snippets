@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## 1.3.0 (August 20, 2019)
+
+- Add Azure Pipelines.
+- Create several tests.
+- Fix bug in `getExtensionIdFromDescription()` which was returning bad extension id.
+
 ## 1.2.0 (August 19, 2019)
 
 - Instead of `(manually installed)` show `(installed)`.
