@@ -1,4 +1,4 @@
-# Control Snippets &middot; [![Visual Studio Marketplace](https://img.shields.io/visual-studio-marketplace/v/svipas.control-snippets.svg)](https://marketplace.visualstudio.com/items?itemName=svipas.control-snippets)
+# Control Snippets &middot; [![Visual Studio Marketplace](https://img.shields.io/visual-studio-marketplace/v/svipas.control-snippets.svg)](https://marketplace.visualstudio.com/items?itemName=svipas.control-snippets) [![Build Status](https://dev.azure.com/svipas/svipas/_apis/build/status/svipas.vscode-control-snippets?branchName=master)](https://dev.azure.com/svipas/svipas/_build/latest?definitionId=5&branchName=master)
 
 Disable or enable VS Code's built-in snippets and manually installed snippets from extensions.
 
