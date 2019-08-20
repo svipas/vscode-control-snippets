@@ -35,12 +35,19 @@
   "scripts": {
     "vscode:prepublish": "yarn run compile",
     "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./"
+    "watch": "tsc -watch -p ./",
+    "pretest": "yarn compile",
+    "test": "node ./out/test/run-test.js"
   },
   "devDependencies": {
+    "@types/glob": "^7.1.1",
+    "@types/mocha": "^5.2.7",
     "@types/node": "^10.14.15",
     "@types/vscode": "^1.30.0",
-    "typescript": "^3.5.3"
+    "glob": "^7.1.4",
+    "mocha": "^6.2.0",
+    "typescript": "^3.5.3",
+    "vscode-test": "^1.2.0"
   },
   "keywords": [
     "enable",
