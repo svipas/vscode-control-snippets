@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 - Add `azure-pipelines.yml` and `control-snippets.png` to `.vscodeignore`.
+- Update dependencies.
 
 ## 1.3.0 (August 20, 2019)
 
