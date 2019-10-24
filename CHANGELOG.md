@@ -1,9 +1,12 @@
 ## [Unreleased]
 
+## 1.4.0 (October 24, 2019)
+
 - Add `azure-pipelines.yml` and `control-snippets.png` to `.vscodeignore`.
 - Update dependencies.
 - Add more `keywords` in `package.json`.
 - Set `extensionKind` as `workspace` in `package.json`.
+- Update `README.md` by explaining why you still see snippets in Windows. Fixes [#2](https://github.com/svipas/vscode-control-snippets/issues/2). Thanks [gluons](https://github.com/gluons).
 
 ## 1.3.0 (August 20, 2019)
 
