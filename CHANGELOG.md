@@ -2,6 +2,8 @@
 
 - Add `azure-pipelines.yml` and `control-snippets.png` to `.vscodeignore`.
 - Update dependencies.
+- Add more `keywords` in `package.json`.
+- Set `extensionKind` as `workspace` in `package.json`.
 
 ## 1.3.0 (August 20, 2019)
 
