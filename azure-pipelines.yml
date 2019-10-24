@@ -4,9 +4,9 @@ jobs:
       name: Hosted VS2017
     steps:
       - task: NodeTool@0
-        displayName: 'Use Node 10.x'
+        displayName: 'Use Node 12.x'
         inputs:
-          versionSpec: 10.x
+          versionSpec: 12.x
       - script: 'yarn install'
         displayName: 'Install dependencies'
       - script: 'yarn test'
@@ -16,9 +16,9 @@ jobs:
       name: Hosted macOS
     steps:
       - task: NodeTool@0
-        displayName: 'Use Node 10.x'
+        displayName: 'Use Node 12.x'
         inputs:
-          versionSpec: 10.x
+          versionSpec: 12.x
       - script: 'yarn install'
         displayName: 'Install dependencies'
       - script: 'yarn test'
@@ -28,9 +28,9 @@ jobs:
       name: Hosted Ubuntu 1604
     steps:
       - task: NodeTool@0
-        displayName: 'Use Node 10.x'
+        displayName: 'Use Node 12.x'
         inputs:
-          versionSpec: 10.x
+          versionSpec: 12.x
       - script: 'yarn install'
         displayName: 'Install dependencies'
       - script: |
@@ -42,3 +42,11 @@ jobs:
         displayName: 'Run tests'
         env:
           DISPLAY: :10
+trigger:
+  branches:
+    include:
+      - '*'
+pr:
+  branches:
+    include:
+      - '*'
