@@ -4,6 +4,7 @@
   "description": "Disable or enable VS Code's built-in snippets and manually installed snippets from extensions.",
   "version": "1.3.0",
   "publisher": "svipas",
+  "main": "./out/extension.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/svipas/vscode-control-snippets.git"
@@ -15,6 +16,7 @@
   "engines": {
     "vscode": "^1.30.0"
   },
+  "extensionKind": "workspace",
   "categories": [
     "Other",
     "Snippets",
@@ -23,7 +25,6 @@
   "activationEvents": [
     "onCommand:extension.control-snippets"
   ],
-  "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
@@ -42,17 +43,20 @@
   "devDependencies": {
     "@types/glob": "^7.1.1",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^10.14.19",
+    "@types/node": "^12.11.6",
     "@types/vscode": "^1.30.0",
-    "glob": "^7.1.4",
-    "mocha": "^6.2.1",
+    "glob": "^7.1.5",
+    "mocha": "^6.2.2",
     "typescript": "^3.6.4",
     "vscode-test": "^1.2.0"
   },
   "keywords": [
+    "override",
     "enable",
     "disable",
     "global",
+    "local",
+    "installed",
     "builtin",
     "built-in",
     "code",
