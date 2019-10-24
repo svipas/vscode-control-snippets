@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## 1.4.1 (October 24, 2019)
+
+- Update `azure-pipelines.yml` to use Node 12 and fix triggers.
+
 ## 1.4.0 (October 24, 2019)
 
 - Add `azure-pipelines.yml` and `control-snippets.png` to `.vscodeignore`.
