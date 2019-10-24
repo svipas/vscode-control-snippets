@@ -26,20 +26,17 @@ export function activate(context: vscode.ExtensionContext) {
     'extension.control-snippets',
     async (args?: [vscode.CancellationToken?]) => {
       try {
-        let cancellationToken;
+        let cancellationToken: vscode.CancellationToken | undefined;
         if (args && args[0]) {
           cancellationToken = args[0];
         }
 
-        const quickPickItems: vscode.QuickPickItem[] = [];
         const extensions = await getAllExtensions();
-        extensions.forEach(ext => {
-          quickPickItems.push({
-            label: ext.name,
-            description: ext.description,
-            picked: ext.isEnabled
-          });
-        });
+        const quickPickItems: vscode.QuickPickItem[] = extensions.map(ext => ({
+          label: ext.name,
+          description: ext.description,
+          picked: ext.isEnabled
+        }));
 
         const selectedQuickPickValues = await promisifyThenable(
           vscode.window.showQuickPick(
