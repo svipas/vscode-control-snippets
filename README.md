@@ -18,11 +18,7 @@ Install through VS Code extensions, search for `Control Snippets` by `Benas Svip
 
 ### I still see snippets
 
-&#x26a0; Reload or restart of VS Code is required after disable or enable snippets from extensions to take effect.
-
-### It doesn't work on system setup version of VS Code (Windows)
-
-You have to **run VS Code as Admin** before disable or enable snippets.
+Reload or restart of VS Code is required after disable or enable snippets from extensions to take effect. _If you're in Windows, you have to run VS Code as administrator in order to use this extension._
 
 ### I got _"Extensions have been modified on disk. Please reload the window."_ message
 
