@@ -26,11 +26,6 @@ export function activate(context: vscode.ExtensionContext) {
     'extension.control-snippets',
     async (args?: [vscode.CancellationToken?]) => {
       try {
-        let cancellationToken: vscode.CancellationToken | undefined;
-        if (args && args[0]) {
-          cancellationToken = args[0];
-        }
-
         const extensions = await getAllExtensions();
         const quickPickItems: vscode.QuickPickItem[] = extensions.map(ext => ({
           label: ext.name,
@@ -47,7 +42,7 @@ export function activate(context: vscode.ExtensionContext) {
               matchOnDescription: true,
               placeHolder: 'Select extension whose snippets to disable or enable'
             },
-            cancellationToken
+            args?.[0]
           )
         );
 
