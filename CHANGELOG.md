@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## 1.4.2 (November 15, 2019)
+
+- Update all dependencies.
+- Minor changes to extension tests.
+- Use new TypeScript features in several places.
+
 ## 1.4.1 (October 24, 2019)
 
 - Update `azure-pipelines.yml` to use Node 12 and fix triggers.
