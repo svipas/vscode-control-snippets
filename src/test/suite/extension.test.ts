@@ -1,11 +1,13 @@
-import * as vscode from 'vscode';
 import * as assert from 'assert';
-import { getAllExtensions, getExtensionIdFromDescription } from '../../extension';
+import * as vscode from 'vscode';
+import { Extension, getAllExtensions, getExtensionIdFromDescription } from '../../extension';
 
 suite('Extension', () => {
   test('Control Snippets', done => {
     const cancellationTokenSource = new vscode.CancellationTokenSource();
+
     vscode.commands.executeCommand('extension.control-snippets', cancellationTokenSource.token);
+
     setTimeout(() => {
       cancellationTokenSource.cancel();
       done();
@@ -14,26 +16,18 @@ suite('Extension', () => {
 
   test('getAllExtensions()', async () => {
     const extensions = await getAllExtensions();
+
     extensions.forEach(ext => {
-      if (
-        'id' in ext &&
-        'description' in ext &&
-        'isEnabled' in ext &&
-        'name' in ext &&
-        'packageJSON' in ext &&
-        'path' in ext
-      ) {
-        assert(true);
-      } else {
-        assert(false, 'missing properties');
-      }
+      const isAllValuesDefined = Object.keys(ext).every(key => ext[key as keyof Extension] != null);
+      assert(isAllValuesDefined, 'missing properties');
     });
   });
 
   test('getExtensionIdFromDescription()', () => {
     const builtin = 'vscode.bat (built-in) 🔋';
-    const installed = 'ms-vscode.Go (installed) 🔌';
     assert.strictEqual(getExtensionIdFromDescription(builtin), 'vscode.bat');
+
+    const installed = 'ms-vscode.Go (installed) 🔌';
     assert.strictEqual(getExtensionIdFromDescription(installed), 'ms-vscode.Go');
   });
 });

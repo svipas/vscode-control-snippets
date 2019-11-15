@@ -2,7 +2,7 @@ import { readFile, writeFile } from 'fs';
 import { join } from 'path';
 import * as vscode from 'vscode';
 
-interface Extension {
+export interface Extension {
   id: string;
   name: string;
   description: string;
@@ -181,7 +181,10 @@ export async function getAllExtensions(): Promise<Extension[]> {
 
 function promisifyThenable<T>(fn: Thenable<T | undefined>): Promise<T | undefined> {
   return new Promise((resolve, reject) => {
-    fn.then(value => resolve(value), err => reject(err));
+    fn.then(
+      value => resolve(value),
+      err => reject(err)
+    );
   });
 }
 
