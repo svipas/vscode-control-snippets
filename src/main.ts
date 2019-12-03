@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 import {
-  ModifyExtensionAction,
   ExtensionData,
   getAllExtensionsData,
   getExtensionIdFromDescription,
+  ModifyExtensionAction,
   modifyExtensionSnippets
 } from './extension';
 
@@ -13,7 +13,21 @@ const MODAL_RELOAD = 'Reload';
 export function activate(context: vscode.ExtensionContext) {
   const disposable = vscode.commands.registerCommand(EXTENSION_COMMAND, async (args?: [vscode.CancellationToken?]) => {
     try {
-      await openControlSnippets(args?.[0]);
+      const shouldPromptForReload = await openControlSnippets(args?.[0]);
+      if (!shouldPromptForReload) {
+        return;
+      }
+
+      const reloadModalResponse = await showReloadModal();
+      if (reloadModalResponse?.title === MODAL_RELOAD) {
+        reloadWindow();
+        return;
+      }
+
+      const reloadWarningResponse = await showReloadWarning();
+      if (reloadWarningResponse?.title === MODAL_RELOAD) {
+        reloadWindow();
+      }
     } catch (err) {
       vscode.window.showErrorMessage(err);
     }
@@ -24,7 +38,10 @@ export function activate(context: vscode.ExtensionContext) {
 
 export function deactivate() {}
 
-async function openControlSnippets(cancellationToken?: vscode.CancellationToken) {
+/**
+ * @returns true if it should prompt reload modal, false otherwise.
+ */
+async function openControlSnippets(cancellationToken?: vscode.CancellationToken): Promise<boolean> {
   const extensionsData = await getAllExtensionsData();
   const quickPickItems: vscode.QuickPickItem[] = extensionsData.map(ext => ({
     label: ext.name,
@@ -45,24 +62,36 @@ async function openControlSnippets(cancellationToken?: vscode.CancellationToken)
 
   // Canceled by user.
   if (!selectedQuickPickValues) {
-    return;
+    return false;
   }
 
   const enabledExtensions: ExtensionData[] = [];
-  const disabledExtensions: ExtensionData[] = [];
 
   // Nothing was selected, disable all extensions.
   if (selectedQuickPickValues.length === 0) {
+    // All extensions snippets are already disabled.
+    if (extensionsData.every(ext => ext.isSnippetsEnabled != null && !ext.isSnippetsEnabled)) {
+      return false;
+    }
+
     for (const ext of extensionsData) {
       // Extension is already disabled.
-      if (!ext.isSnippetsEnabled || ext.packageJSON.contributes.snippets_disabled) {
+      if (ext.isSnippetsEnabled != null && !ext.isSnippetsEnabled) {
         continue;
       }
 
       await modifyExtensionSnippets(ModifyExtensionAction.Disable, ext);
-      disabledExtensions.push(ext);
     }
+
+    return true;
   }
+
+  // All extensions snippets are already enabled.
+  if (selectedQuickPickValues.length === extensionsData.length && extensionsData.every(ext => ext.isSnippetsEnabled)) {
+    return false;
+  }
+
+  let shouldPromptReloadModal = false;
 
   // Only selected values from quick pick.
   for (const value of selectedQuickPickValues) {
@@ -72,59 +101,51 @@ async function openControlSnippets(cancellationToken?: vscode.CancellationToken)
     }
 
     // Extension is already enabled.
-    if (ext.isSnippetsEnabled || ext.packageJSON.contributes.snippets) {
+    if (ext.isSnippetsEnabled) {
       enabledExtensions.push(ext);
       continue;
     }
 
     await modifyExtensionSnippets(ModifyExtensionAction.Enable, ext);
     enabledExtensions.push(ext);
+    shouldPromptReloadModal = true;
   }
 
-  // Disable extensions by checking difference between disabled/enabled extensions from the quick pick.
-  if (disabledExtensions.length !== extensionsData.length) {
-    for (const ext of extensionsData) {
-      const isEnabledExtensionFromQuickPick = enabledExtensions.find(val => val.id === ext.id);
-      if (isEnabledExtensionFromQuickPick) {
-        continue;
-      }
-
-      const isDisabledExtensionFromQuickPick = disabledExtensions.find(val => val.id === ext.id);
-      if (isDisabledExtensionFromQuickPick) {
-        continue;
-      }
-
-      // Extension is already disabled.
-      if (!ext.isSnippetsEnabled || ext.packageJSON.contributes.snippets_disabled) {
-        continue;
-      }
-
-      await modifyExtensionSnippets(ModifyExtensionAction.Disable, ext);
+  // Disable extensions by checking difference between enabled extensions.
+  for (const ext of extensionsData) {
+    const isEnabledExtensionFromQuickPick = enabledExtensions.find(val => val.id === ext.id);
+    if (isEnabledExtensionFromQuickPick) {
+      continue;
     }
+
+    // Extension is already disabled.
+    if (ext.isSnippetsEnabled != null && !ext.isSnippetsEnabled) {
+      continue;
+    }
+
+    await modifyExtensionSnippets(ModifyExtensionAction.Disable, ext);
+    shouldPromptReloadModal = true;
   }
 
-  let reloadModalResponse = await vscode.window.showInformationMessage(
-    'To disable or enable snippets from extensions reload is required.',
-    { modal: true },
-    ...([{ title: 'Cancel', isCloseAffordance: true }, { title: MODAL_RELOAD }] as vscode.MessageItem[])
-  );
-
-  if (reloadModalResponse?.title === MODAL_RELOAD) {
-    reloadWindow();
-    return;
-  }
-
-  reloadModalResponse = await vscode.window.showWarningMessage(
-    'Reload or restart of VS Code is required after disable or enable snippets from extensions to take effect.',
-    { modal: false },
-    { title: MODAL_RELOAD } as vscode.MessageItem
-  );
-
-  if (reloadModalResponse?.title === MODAL_RELOAD) {
-    reloadWindow();
-  }
+  return shouldPromptReloadModal;
 }
 
 function reloadWindow() {
   vscode.commands.executeCommand('workbench.action.reloadWindow');
+}
+
+function showReloadModal() {
+  return vscode.window.showInformationMessage(
+    'To disable or enable snippets from extensions reload is required.',
+    { modal: true },
+    ...([{ title: 'Cancel', isCloseAffordance: true }, { title: MODAL_RELOAD }] as vscode.MessageItem[])
+  );
+}
+
+function showReloadWarning() {
+  return vscode.window.showWarningMessage(
+    'Reload or restart of VS Code is required after disable or enable snippets from extensions to take effect.',
+    { modal: false },
+    { title: MODAL_RELOAD } as vscode.MessageItem
+  );
 }
