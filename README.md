@@ -2,7 +2,7 @@
 
 Disable or enable VS Code's built-in snippets and manually installed snippets from extensions.
 
-<img src="https://raw.githubusercontent.com/svipas/vscode-control-snippets/master/control-snippets.png" width="70%">
+<img src="https://raw.githubusercontent.com/svipas/vscode-control-snippets/master/images/control-snippets.jpg" width="70%">
 
 ## Installation
 

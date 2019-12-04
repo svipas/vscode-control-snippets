@@ -7,5 +7,5 @@ src/**
 **/tslint.json
 **/*.map
 **/*.ts
+images/**
 azure-pipelines.yml
-control-snippets.png
