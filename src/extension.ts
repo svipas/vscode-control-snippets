@@ -1,6 +1,6 @@
-import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as vscode from 'vscode';
 import { MODIFY_EXTENSION_INVALID_ACTION_ERROR } from './errors';
 
 export enum ModifyExtensionAction {
@@ -44,19 +44,17 @@ export async function modifyExtensionSnippets(
   modifyAction: ModifyExtensionAction,
   extension: ExtensionData
 ): Promise<void> {
-  const { packageJSON } = extension;
-
   if (modifyAction === ModifyExtensionAction.Disable) {
-    packageJSON.contributes.snippets_disabled = packageJSON.contributes.snippets;
-    packageJSON.contributes.snippets = undefined;
+    extension.packageJSON.contributes.snippets_disabled = extension.packageJSON.contributes.snippets;
+    extension.packageJSON.contributes.snippets = undefined;
   } else if (modifyAction === ModifyExtensionAction.Enable) {
-    packageJSON.contributes.snippets = packageJSON.contributes.snippets_disabled;
-    packageJSON.contributes.snippets_disabled = undefined;
+    extension.packageJSON.contributes.snippets = extension.packageJSON.contributes.snippets_disabled;
+    extension.packageJSON.contributes.snippets_disabled = undefined;
   } else {
     throw MODIFY_EXTENSION_INVALID_ACTION_ERROR;
   }
 
-  await fs.promises.writeFile(path.join(extension.path, 'package.json'), JSON.stringify(packageJSON));
+  await fs.promises.writeFile(path.join(extension.path, 'package.json'), JSON.stringify(extension.packageJSON));
 }
 
 export async function getAllExtensionsData(): Promise<ExtensionData[]> {

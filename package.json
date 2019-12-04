@@ -25,7 +25,7 @@
     "Programming Languages"
   ],
   "activationEvents": [
-    "onCommand:extension.control-snippets"
+    "*"
   ],
   "contributes": {
     "commands": [

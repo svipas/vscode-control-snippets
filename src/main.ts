@@ -6,34 +6,87 @@ import {
   ModifyExtensionAction,
   modifyExtensionSnippets
 } from './extension';
+import { ExtensionStore } from './extension-store';
 
 export const EXTENSION_COMMAND = 'extension.control-snippets';
-const MODAL_RELOAD = 'Reload';
+const MODAL_RELOAD = 'Reload Window';
 
-export function activate(context: vscode.ExtensionContext) {
-  const disposable = vscode.commands.registerCommand(EXTENSION_COMMAND, async (args?: [vscode.CancellationToken?]) => {
-    try {
-      const shouldPromptForReload = await openControlSnippets(args?.[0]);
-      if (!shouldPromptForReload) {
-        return;
+export async function activate(context: vscode.ExtensionContext) {
+  const store = new ExtensionStore(context.globalState);
+  const controlSnippetsCommand = vscode.commands.registerCommand(
+    EXTENSION_COMMAND,
+    async (args?: [vscode.CancellationToken?]) => {
+      try {
+        const shouldPromptForReload = await openControlSnippets(args?.[0]);
+        store.saveExtensionsData(await getAllExtensionsData());
+
+        if (!shouldPromptForReload) {
+          return;
+        }
+
+        const reloadModalResponse = await showReloadModal();
+        if (reloadModalResponse?.title === MODAL_RELOAD) {
+          reloadWindow();
+          return;
+        }
+
+        const reloadWarningResponse = await showReloadWarning();
+        if (reloadWarningResponse?.title === MODAL_RELOAD) {
+          reloadWindow();
+        }
+      } catch (err) {
+        vscode.window.showErrorMessage(err);
+      }
+    }
+  );
+
+  context.subscriptions.push(controlSnippetsCommand);
+
+  if (!store.isNewVSCodeVersion || !store.extensionsData) {
+    return;
+  }
+
+  // By default all extensions snippets are enabled.
+  if (store.extensionsData.every(ext => ext.isSnippetsEnabled)) {
+    return;
+  }
+
+  try {
+    // Update extensions data in case if app location was changed or newer/older VS Code ships with different extensions.
+    const storedExtensions: ExtensionData[] = [];
+    for (const ext of await getAllExtensionsData()) {
+      const storedExt = store.extensionsData.find(storedExt => storedExt.id === ext.id);
+      if (!storedExt) {
+        continue;
       }
 
-      const reloadModalResponse = await showReloadModal();
-      if (reloadModalResponse?.title === MODAL_RELOAD) {
-        reloadWindow();
-        return;
+      storedExt.path = ext.path;
+      storedExt.packageJSON = ext.packageJSON;
+      storedExtensions.push(storedExt);
+    }
+
+    let shouldPromptReloadWarning = false;
+
+    // If VS Code is newer/older than previous version, apply all stored changes.
+    for (const ext of storedExtensions) {
+      if (ext.isSnippetsEnabled != null && !ext.isSnippetsEnabled) {
+        await modifyExtensionSnippets(ModifyExtensionAction.Disable, ext);
+        shouldPromptReloadWarning = true;
       }
+    }
+
+    if (shouldPromptReloadWarning) {
+      // Store latest changes in global storage.
+      store.saveExtensionsData(await getAllExtensionsData());
 
       const reloadWarningResponse = await showReloadWarning();
       if (reloadWarningResponse?.title === MODAL_RELOAD) {
         reloadWindow();
       }
-    } catch (err) {
-      vscode.window.showErrorMessage(err);
     }
-  });
-
-  context.subscriptions.push(disposable);
+  } catch (err) {
+    vscode.window.showErrorMessage(err);
+  }
 }
 
 export function deactivate() {}
