@@ -1,5 +1,19 @@
 ## [Unreleased]
 
+## 1.5.0 (December 4, 2019)
+
+- Update all dependencies.
+- Update `LICENSE` year.
+- Set `extensionKind` to `["workspace"]` in `package.json`.
+- Rename `extension.test.ts` to `main.test.ts` and refactor tests.
+- Set main file name to `main.ts` instead of `extension.ts`.
+- Create `errors.ts` which contains all extension errors.
+- Create `main.ts` and refactor extension to save modified extensions snippets in global store.
+- Prompt for reload modal only if something was changed after "OK" press.
+- Restore modified extensions snippets after VS Code update.
+- Update control snippets image and move it to `images` dir.
+- Create `ExtensionStore` to store current VS Code version and modified extension snippets in global store.
+
 ## 1.4.2 (November 15, 2019)
 
 - Update all dependencies.
