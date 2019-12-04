@@ -8,7 +8,7 @@ import {
 } from './extension';
 import { ExtensionStore } from './extension-store';
 
-export const EXTENSION_COMMAND = 'extension.control-snippets';
+const EXTENSION_COMMAND = 'extension.control-snippets';
 const MODAL_RELOAD = 'Reload Window';
 
 export async function activate(context: vscode.ExtensionContext) {
