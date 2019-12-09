@@ -18,7 +18,12 @@ export async function activate(context: vscode.ExtensionContext) {
     async (args?: [vscode.CancellationToken?]) => {
       try {
         const shouldPromptForReload = await openControlSnippets(args?.[0]);
-        store.saveExtensionsData(await getAllExtensionsData());
+
+        // Save disabled extensions to global store.
+        const disabledExtensions = (await getAllExtensionsData()).filter(ext => {
+          return ext.isSnippetsEnabled != null && !ext.isSnippetsEnabled;
+        });
+        store.saveDisabledExtensions(disabledExtensions);
 
         if (!shouldPromptForReload) {
           return;
@@ -42,47 +47,34 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(controlSnippetsCommand);
 
-  if (!store.isNewVSCodeVersion || !store.extensionsData) {
-    return;
-  }
-
-  // By default all extensions snippets are enabled.
-  if (store.extensionsData.every(ext => ext.isSnippetsEnabled)) {
+  if (!Array.isArray(store.disabledExtensions) || store.disabledExtensions.length === 0) {
     return;
   }
 
   try {
     // Update extensions data in case if app location was changed or newer/older VS Code ships with different extensions.
-    const storedExtensions: ExtensionData[] = [];
+    const disabledExtensions: ExtensionData[] = [];
     for (const ext of await getAllExtensionsData()) {
-      const storedExt = store.extensionsData.find(storedExt => storedExt.id === ext.id);
-      if (!storedExt) {
+      const disabledExt = store.disabledExtensions.find(disabledExt => disabledExt.id === ext.id);
+      if (!disabledExt) {
         continue;
       }
 
-      storedExt.path = ext.path;
-      storedExt.packageJSON = ext.packageJSON;
-      storedExtensions.push(storedExt);
+      disabledExt.path = ext.path;
+      disabledExt.packageJSON = ext.packageJSON;
+      disabledExtensions.push(disabledExt);
     }
 
-    let shouldPromptReloadWarning = false;
-
-    // If VS Code is newer/older than previous version, apply all stored changes.
-    for (const ext of storedExtensions) {
-      if (ext.isSnippetsEnabled != null && !ext.isSnippetsEnabled) {
-        await modifyExtensionSnippets(ModifyExtensionAction.Disable, ext);
-        shouldPromptReloadWarning = true;
-      }
+    // Disable extensions snippets if there's any stored in global store.
+    for (const ext of disabledExtensions) {
+      await modifyExtensionSnippets(ModifyExtensionAction.Disable, ext);
     }
 
-    if (shouldPromptReloadWarning) {
-      // Store latest changes in global storage.
-      store.saveExtensionsData(await getAllExtensionsData());
+    store.clearDisabledExtensions();
 
-      const reloadWarningResponse = await showReloadWarning();
-      if (reloadWarningResponse?.title === MODAL_RELOAD) {
-        reloadWindow();
-      }
+    const reloadWarningResponse = await showReloadWarning();
+    if (reloadWarningResponse?.title === MODAL_RELOAD) {
+      reloadWindow();
     }
   } catch (err) {
     vscode.window.showErrorMessage(err);
