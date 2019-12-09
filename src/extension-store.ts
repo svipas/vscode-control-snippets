@@ -2,42 +2,28 @@ import * as vscode from 'vscode';
 import { ExtensionData } from './extension';
 
 enum ExtensionStoreKey {
-  VSCODE_VERSION = 'vscode_version',
-  EXTENSIONS_DATA = 'extensions_data'
+  DISABLED_EXTENSIONS = 'disabled_extensions'
 }
 
 export class ExtensionStore {
   private readonly _globalState: vscode.ExtensionContext['globalState'];
-  private _isNewVSCodeVersion = false;
-  private readonly _extensionsData?: ExtensionData[];
+  private readonly _disabledExtensions?: ExtensionData[];
 
   constructor(globalState: vscode.ExtensionContext['globalState']) {
     this._globalState = globalState;
-
-    const vscodeVersionFromStore = globalState.get<string>(ExtensionStoreKey.VSCODE_VERSION);
-    if (!vscodeVersionFromStore) {
-      globalState.update(ExtensionStoreKey.VSCODE_VERSION, vscode.version);
-    } else if (vscodeVersionFromStore !== vscode.version) {
-      globalState.update(ExtensionStoreKey.VSCODE_VERSION, vscode.version);
-      this._isNewVSCodeVersion = true;
-    }
-
-    this._extensionsData = this._globalState.get<ExtensionData[]>(ExtensionStoreKey.EXTENSIONS_DATA);
+    this._disabledExtensions = this._globalState.get<ExtensionData[]>(ExtensionStoreKey.DISABLED_EXTENSIONS);
   }
 
-  get isNewVSCodeVersion() {
-    return this._isNewVSCodeVersion;
+  get disabledExtensions(): ExtensionData[] | undefined {
+    return this._disabledExtensions;
   }
 
-  get extensionsData(): ExtensionData[] | undefined {
-    return this._extensionsData;
+  saveDisabledExtensions(extensions: ExtensionData[]) {
+    const disabledExtensionsId: Pick<ExtensionData, 'id'>[] = extensions.map(ext => ({ id: ext.id }));
+    this._globalState.update(ExtensionStoreKey.DISABLED_EXTENSIONS, disabledExtensionsId);
   }
 
-  saveExtensionsData(extensions: ExtensionData[]) {
-    const mappedExtensions: Pick<ExtensionData, 'id' | 'isSnippetsEnabled'>[] = extensions.map(ext => ({
-      id: ext.id,
-      isSnippetsEnabled: ext.isSnippetsEnabled
-    }));
-    this._globalState.update(ExtensionStoreKey.EXTENSIONS_DATA, mappedExtensions);
+  clearDisabledExtensions() {
+    this._globalState.update(ExtensionStoreKey.DISABLED_EXTENSIONS, undefined);
   }
 }
