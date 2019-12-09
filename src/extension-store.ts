@@ -13,9 +13,9 @@ export class ExtensionStore {
 
   constructor(globalState: vscode.ExtensionContext['globalState']) {
     this._globalState = globalState;
-    this._disabledExtensions = this._globalState.get<ExtensionData[]>(ExtensionStoreKey.DISABLED_EXTENSIONS);
+    this._disabledExtensions = globalState.get<ExtensionData[]>(ExtensionStoreKey.DISABLED_EXTENSIONS);
 
-    const vscodeVersionFromStorage = this._globalState.get<string>(ExtensionStoreKey.VSCODE_VERSION);
+    const vscodeVersionFromStorage = globalState.get<string>(ExtensionStoreKey.VSCODE_VERSION);
     if (vscodeVersionFromStorage && vscodeVersionFromStorage !== vscode.version) {
       this._isNewVSCodeVersion = true;
     }
@@ -31,10 +31,7 @@ export class ExtensionStore {
 
   async saveDisabledExtensions(extensions: ExtensionData[]): Promise<void> {
     const disabledExtensionsId: Pick<ExtensionData, 'id'>[] = extensions.map(ext => ({ id: ext.id }));
-    await Promise.all([
-      this._globalState.update(ExtensionStoreKey.DISABLED_EXTENSIONS, disabledExtensionsId),
-      this.updateVSCodeVersion
-    ]);
+    await this._globalState.update(ExtensionStoreKey.DISABLED_EXTENSIONS, disabledExtensionsId);
   }
 
   async updateVSCodeVersion(): Promise<void> {

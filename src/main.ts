@@ -22,11 +22,11 @@ export async function activate(context: vscode.ExtensionContext) {
           return;
         }
 
-        // Save disabled extensions to global store.
+        // Save disabled extensions and current VS Code version to global store.
         const disabledExtensions = (await getAllExtensionsData()).filter(ext => {
           return ext.isSnippetsEnabled != null && !ext.isSnippetsEnabled;
         });
-        await store.saveDisabledExtensions(disabledExtensions);
+        await Promise.all([store.saveDisabledExtensions(disabledExtensions), store.updateVSCodeVersion()]);
 
         const reloadModalResponse = await showReloadModal();
         if (reloadModalResponse?.title === MODAL_RELOAD) {
