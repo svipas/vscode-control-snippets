@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## 1.6.0 (December 9, 2019)
+
+- Update all dependencies.
+- Refactor `ExtensionStore` to store only disabled extensions.
+- Fix restoring of disabled extensions snippets after extension activation for Insiders build.
+
 ## 1.5.0 (December 4, 2019)
 
 - Update all dependencies.
