@@ -62,7 +62,7 @@ export async function getAllExtensionsData(): Promise<ExtensionData[]> {
 
   for (const ext of vscode.extensions.all) {
     // Read package.json instead of accessing it from extension because it caches results and we need it in real-time.
-    const fileContent = (await fs.promises.readFile(path.join(ext.extensionPath, 'package.json'))).toString();
+    const fileContent = await fs.promises.readFile(path.join(ext.extensionPath, 'package.json'), 'utf8');
     const packageJSON = JSON.parse(fileContent);
 
     if (!packageJSON.contributes) {
