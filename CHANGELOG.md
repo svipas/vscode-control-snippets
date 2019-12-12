@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## 1.6.1 (December 13, 2019)
+
+- Update all dependencies.
+
 ## 1.6.0 (December 9, 2019)
 
 - Update all dependencies.
