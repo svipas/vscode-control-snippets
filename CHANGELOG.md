@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## 1.7.0 (December 13, 2019)
+
+- Set `target` in `tsconfig.json` to `ES2017` instead of `es6` and remove `lib` key.
+- Refactor extension logic to make it easier to maintain and to reduce some boilerplate.
+
 ## 1.6.1 (December 13, 2019)
 
 - Update all dependencies.
