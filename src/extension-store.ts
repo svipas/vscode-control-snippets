@@ -29,6 +29,10 @@ export class ExtensionStore {
     return this._disabledExtensions;
   }
 
+  findExtensionById(id: string): ExtensionData | undefined {
+    return this._disabledExtensions?.find(ext => ext.id === id);
+  }
+
   async saveDisabledExtensions(extensions: ExtensionData[]): Promise<void> {
     const disabledExtensionsId: Pick<ExtensionData, 'id'>[] = extensions.map(ext => ({ id: ext.id }));
     await this._globalState.update(ExtensionStoreKey.DISABLED_EXTENSIONS, disabledExtensionsId);

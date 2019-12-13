@@ -1,12 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { MODIFY_EXTENSION_INVALID_ACTION_ERROR } from './errors';
-
-export enum ModifyExtensionAction {
-  Enable,
-  Disable
-}
 
 export interface ExtensionData {
   id: string;
@@ -27,38 +21,28 @@ interface ExtensionPackageJSON {
   };
 }
 
-export function getExtensionIdFromDescription(description?: string): string | undefined {
-  if (description?.includes('built-in')) {
-    return description.slice(0, description.indexOf('(built-in)') - 1);
+interface ReadExtensions {
+  all: ExtensionData[];
+  disabled: ExtensionData[];
+  enabled: ExtensionData[];
+  isAllEnabled: boolean;
+  isAllDisabled: boolean;
+}
+
+function getIdFromText(text?: string): string | undefined {
+  if (text?.includes('built-in')) {
+    return text.slice(0, text.indexOf('(built-in)') - 1);
   }
 
-  if (description?.includes('installed')) {
-    return description.slice(0, description.indexOf('(installed)') - 1);
+  if (text?.includes('installed')) {
+    return text.slice(0, text.indexOf('(installed)') - 1);
   }
 }
 
-/**
- * Modify extension (write to package.json).
- */
-export async function modifyExtensionSnippets(
-  modifyAction: ModifyExtensionAction,
-  extension: ExtensionData
-): Promise<void> {
-  if (modifyAction === ModifyExtensionAction.Disable) {
-    extension.packageJSON.contributes.snippets_disabled = extension.packageJSON.contributes.snippets;
-    extension.packageJSON.contributes.snippets = undefined;
-  } else if (modifyAction === ModifyExtensionAction.Enable) {
-    extension.packageJSON.contributes.snippets = extension.packageJSON.contributes.snippets_disabled;
-    extension.packageJSON.contributes.snippets_disabled = undefined;
-  } else {
-    throw MODIFY_EXTENSION_INVALID_ACTION_ERROR;
-  }
-
-  await fs.promises.writeFile(path.join(extension.path, 'package.json'), JSON.stringify(extension.packageJSON));
-}
-
-export async function getAllExtensionsData(): Promise<ExtensionData[]> {
-  const extensionsData: ExtensionData[] = [];
+async function readAllExtensions(): Promise<ReadExtensions> {
+  const allExtensions: ExtensionData[] = [];
+  const disabledExtensions: ExtensionData[] = [];
+  const enabledExtensions: ExtensionData[] = [];
 
   for (const ext of vscode.extensions.all) {
     // Read package.json instead of accessing it from extension because it caches results and we need it in real-time.
@@ -86,12 +70,22 @@ export async function getAllExtensionsData(): Promise<ExtensionData[]> {
 
     if (packageJSON.contributes.snippets) {
       extension.isSnippetsEnabled = true;
-      extensionsData.push(extension);
+      allExtensions.push(extension);
+      enabledExtensions.push(extension);
     } else if (packageJSON.contributes.snippets_disabled) {
       extension.isSnippetsEnabled = false;
-      extensionsData.push(extension);
+      allExtensions.push(extension);
+      disabledExtensions.push(extension);
     }
   }
 
-  return extensionsData;
+  return {
+    all: allExtensions,
+    enabled: enabledExtensions,
+    disabled: disabledExtensions,
+    isAllDisabled: disabledExtensions.length === allExtensions.length,
+    isAllEnabled: enabledExtensions.length === allExtensions.length
+  };
 }
+
+export const extension = { getIdFromText, readAllExtensions };
