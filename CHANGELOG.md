@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## 1.7.1 (December 18, 2019)
+
+- Update all dependencies.
+- Publish extension with `--yarn` flag in `vsce` command.
+
 ## 1.7.0 (December 13, 2019)
 
 - Set `target` in `tsconfig.json` to `ES2017` instead of `es6` and remove `lib` key.
