@@ -11,5 +11,10 @@ import { runTests } from 'vscode-test';
   const extensionTestsPath = path.join(__dirname, './suite');
 
   // Download VS Code, unzip it and run the integration test
-  await runTests({ extensionDevelopmentPath, extensionTestsPath });
+  try {
+    const exitCode = await runTests({ extensionDevelopmentPath, extensionTestsPath });
+    process.exitCode = exitCode;
+  } catch {
+    process.exitCode = 1;
+  }
 })();
