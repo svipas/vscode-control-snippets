@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## 1.7.2 (January 17, 2020)
+
+- Update all dependencies.
+- Properly return `exitCode` after tests.
+
 ## 1.7.1 (December 18, 2019)
 
 - Update all dependencies.
