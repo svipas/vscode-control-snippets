@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { extension, ExtensionData } from './extension';
+import { Extension, ExtensionData } from './extension';
 import { ExtensionStore } from './extension-store';
-import { snippets } from './snippets';
+import { Snippets } from './snippets';
 
 const EXTENSION_COMMAND = 'extension.control-snippets';
 const MODAL_RELOAD = 'Reload Window';
@@ -18,7 +18,7 @@ export async function activate(context: vscode.ExtensionContext) {
         }
 
         // Save disabled extensions and current VS Code version to global store.
-        const disabledExtensions = (await extension.readAllExtensions()).disabled;
+        const disabledExtensions = (await Extension.readAllExtensions()).disabled;
         await Promise.all([store.saveDisabledExtensions(disabledExtensions), store.updateVSCodeVersion()]);
 
         const reloadModalResponse = await showReloadModal();
@@ -48,7 +48,7 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 
   try {
-    const extensions = await extension.readAllExtensions();
+    const extensions = await Extension.readAllExtensions();
     let shouldPromptForReload = false;
 
     // Disable extensions snippets.
@@ -57,7 +57,7 @@ export async function activate(context: vscode.ExtensionContext) {
         continue;
       }
 
-      await snippets.disable(ext);
+      await Snippets.disable(ext);
       shouldPromptForReload = true;
     }
 
@@ -80,7 +80,7 @@ export function deactivate() {}
  * @returns true if it should prompt reload modal, false otherwise.
  */
 async function openControlSnippets(cancellationToken?: vscode.CancellationToken): Promise<boolean> {
-  const extensions = await extension.readAllExtensions();
+  const extensions = await Extension.readAllExtensions();
   const quickPickItems: vscode.QuickPickItem[] = extensions.all.map(ext => ({
     label: ext.name,
     description: ext.description,
@@ -113,7 +113,7 @@ async function openControlSnippets(cancellationToken?: vscode.CancellationToken)
     }
 
     for (const ext of extensions.enabled) {
-      await snippets.disable(ext);
+      await Snippets.disable(ext);
     }
 
     return true;
@@ -128,7 +128,7 @@ async function openControlSnippets(cancellationToken?: vscode.CancellationToken)
 
   // Only selected values from quick pick.
   for (const value of selectedQuickPickValues) {
-    const ext = extensions.all.find(ext => ext.id === extension.getIdFromText(value.description));
+    const ext = extensions.all.find(ext => ext.id === Extension.idFromText(value.description));
     if (!ext) {
       continue;
     }
@@ -139,7 +139,7 @@ async function openControlSnippets(cancellationToken?: vscode.CancellationToken)
       continue;
     }
 
-    await snippets.enable(ext);
+    await Snippets.enable(ext);
     enabledExtensions.push(ext);
     shouldPromptReloadModal = true;
   }
@@ -151,7 +151,7 @@ async function openControlSnippets(cancellationToken?: vscode.CancellationToken)
       continue;
     }
 
-    await snippets.disable(ext);
+    await Snippets.disable(ext);
     shouldPromptReloadModal = true;
   }
 
