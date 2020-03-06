@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## 1.7.5 (March 6, 2020)
+
+- Update all dependencies.
+- Refactor extension.
+
 ## 1.7.4 (February 25, 2020)
 
 - Update all dependencies including TypeScript to 3.8
