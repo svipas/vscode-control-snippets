@@ -1,20 +1,20 @@
 import * as assert from 'assert';
-import { Extension, ExtensionData } from '../../extension';
+import { ExtensionData, getAllExtensionsFromVSCode, getExtensionIdFromText } from '../../extension';
 
 suite('Control Snippets', () => {
-  test('getAllExtensionsData()', async () => {
-    const extensions = await Extension.readAllExtensions();
+  test('getAllExtensionsFromVSCode()', async () => {
+    const extensions = await getAllExtensionsFromVSCode();
     extensions.all.forEach(ext => {
       const isAllValuesDefined = Object.keys(ext).every(key => ext[key as keyof ExtensionData] != null);
       assert(isAllValuesDefined, 'missing properties');
     });
   });
 
-  test('getExtensionIdFromDescription()', () => {
+  test('getExtensionIdFromText()', () => {
     const builtin = 'vscode.bat (built-in) 🔋';
-    assert.strictEqual(Extension.idFromText(builtin), 'vscode.bat');
+    assert.strictEqual(getExtensionIdFromText(builtin), 'vscode.bat');
 
     const installed = 'ms-vscode.Go (installed) 🔌';
-    assert.strictEqual(Extension.idFromText(installed), 'ms-vscode.Go');
+    assert.strictEqual(getExtensionIdFromText(installed), 'ms-vscode.Go');
   });
 });
