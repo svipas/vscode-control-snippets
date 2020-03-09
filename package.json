@@ -40,7 +40,7 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "yarn compile",
-    "test": "node ./out/test/run-test.js"
+    "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
     "@types/glob": "^7.1.1",
