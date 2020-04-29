@@ -4,6 +4,7 @@
 
 - Change indentation to tabs.
 - Update all dependencies.
+- Change filename convention to kebab-case.
 
 ## 1.7.5 (March 6, 2020)
 
