@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## 1.7.6 (April 29, 2020)
+
+- Change indentation to tabs.
+- Update all dependencies.
+
 ## 1.7.5 (March 6, 2020)
 
 - Update all dependencies.
