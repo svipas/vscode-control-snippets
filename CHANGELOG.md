@@ -5,6 +5,7 @@
 - Change indentation to tabs.
 - Update all dependencies.
 - Change filename convention to kebab-case.
+- Add `vscode:publish` script.
 
 ## 1.7.5 (March 6, 2020)
 
