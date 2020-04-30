@@ -25,7 +25,7 @@ suite('snippets', () => {
 	});
 
 	suite('disableSnippetForExtension()', () => {
-		it('should throw if snippet is already disabled', async () => {
+		test('should throw if snippet is already disabled', async () => {
 			extension.packageJSON.contributes.snippets_disabled = [];
 			try {
 				await disableSnippetForExtension(extension as any);
@@ -34,14 +34,14 @@ suite('snippets', () => {
 			}
 		});
 
-		it('should replace snippets with snippets_disabled', async () => {
+		test('should replace snippets with snippets_disabled', async () => {
 			extension.packageJSON.contributes.snippets = [];
 			await disableSnippetForExtension(extension as any);
 			assert.deepStrictEqual(extension.packageJSON.contributes.snippets_disabled, []);
 			assert.strictEqual(extension.packageJSON.contributes.snippets, undefined);
 		});
 
-		it('should save package json after disabling snippets', async () => {
+		test('should save package json after disabling snippets', async () => {
 			await disableSnippetForExtension(extension as any);
 			assert.strictEqual(writeFileFake.calledOnceWith('', JSON.stringify(extension.packageJSON)), true);
 			assert.strictEqual(pathJoinFake.calledOnceWith(extension.path, 'package.json'), true);
@@ -49,7 +49,7 @@ suite('snippets', () => {
 	});
 
 	suite('enableSnippetForExtension()', () => {
-		it('should throw if snippet is already enabled', async () => {
+		test('should throw if snippet is already enabled', async () => {
 			extension.packageJSON.contributes.snippets = [];
 			try {
 				await enableSnippetForExtension(extension as any);
@@ -58,14 +58,14 @@ suite('snippets', () => {
 			}
 		});
 
-		it('should replace snippets_disabled with snippets', async () => {
+		test('should replace snippets_disabled with snippets', async () => {
 			extension.packageJSON.contributes.snippets_disabled = [];
 			await enableSnippetForExtension(extension as any);
 			assert.deepStrictEqual(extension.packageJSON.contributes.snippets, []);
 			assert.strictEqual(extension.packageJSON.contributes.snippets_disabled, undefined);
 		});
 
-		it('should save package json after enabling snippets', async () => {
+		test('should save package json after enabling snippets', async () => {
 			await enableSnippetForExtension(extension as any);
 			assert.strictEqual(writeFileFake.calledOnceWith('', JSON.stringify(extension.packageJSON)), true);
 			assert.strictEqual(pathJoinFake.calledOnceWith(extension.path, 'package.json'), true);
