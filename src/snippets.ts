@@ -3,14 +3,26 @@ import * as path from 'path';
 import { ExtensionData } from './extension';
 
 export async function disableSnippetForExtension(extension: ExtensionData): Promise<void> {
-	extension.packageJSON.contributes.snippets_disabled = extension.packageJSON.contributes.snippets;
-	extension.packageJSON.contributes.snippets = undefined;
+	const { contributes } = extension.packageJSON;
+
+	if (contributes.snippets_disabled) {
+		throw new Error(`${extension.name} is already disabled.`);
+	}
+
+	contributes.snippets_disabled = contributes.snippets;
+	contributes.snippets = undefined;
 	await savePackageJSON(extension);
 }
 
 export async function enableSnippetForExtension(extension: ExtensionData): Promise<void> {
-	extension.packageJSON.contributes.snippets = extension.packageJSON.contributes.snippets_disabled;
-	extension.packageJSON.contributes.snippets_disabled = undefined;
+	const { contributes } = extension.packageJSON;
+
+	if (contributes.snippets) {
+		throw new Error(`${extension.name} is already enabled.`);
+	}
+
+	contributes.snippets = contributes.snippets_disabled;
+	contributes.snippets_disabled = undefined;
 	await savePackageJSON(extension);
 }
 
