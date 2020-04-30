@@ -7,7 +7,7 @@ export function run(testsRoot: string, cb: (error: Error | null, failures?: numb
 	const mocha = new Mocha({
 		ui: 'tdd',
 		useColors: true,
-		timeout: 10_000
+		timeout: 10_000,
 	});
 
 	glob('**/**.test.js', { cwd: testsRoot }, (err, files) => {
@@ -16,11 +16,11 @@ export function run(testsRoot: string, cb: (error: Error | null, failures?: numb
 		}
 
 		// Add files to the test suite
-		files.forEach(f => mocha.addFile(path.resolve(testsRoot, f)));
+		files.forEach((f) => mocha.addFile(path.resolve(testsRoot, f)));
 
 		try {
 			// Run the mocha test
-			mocha.run(failures => cb(null, failures));
+			mocha.run((failures) => cb(null, failures));
 		} catch (err) {
 			cb(err);
 		}

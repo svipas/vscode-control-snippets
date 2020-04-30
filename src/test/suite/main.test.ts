@@ -4,8 +4,8 @@ import { ExtensionData, getAllExtensionsFromVSCode, getExtensionIdFromText } fro
 suite('Control Snippets', () => {
 	test('getAllExtensionsFromVSCode()', async () => {
 		const extensions = await getAllExtensionsFromVSCode();
-		extensions.all.forEach(ext => {
-			const isAllValuesDefined = Object.keys(ext).every(key => ext[key as keyof ExtensionData] != null);
+		extensions.all.forEach((ext) => {
+			const isAllValuesDefined = Object.keys(ext).every((key) => ext[key as keyof ExtensionData] != null);
 			assert(isAllValuesDefined, 'missing properties');
 		});
 	});

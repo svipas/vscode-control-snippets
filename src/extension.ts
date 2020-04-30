@@ -2,6 +2,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
+interface Snippet {
+	language: string;
+	path: string;
+}
+
 export interface ExtensionData {
 	id: string;
 	name: string;
@@ -12,8 +17,8 @@ export interface ExtensionData {
 		publisher: string;
 		displayName?: string;
 		contributes: {
-			snippets?: any;
-			snippets_disabled?: any;
+			snippets?: Snippet[];
+			snippets_disabled?: Snippet[];
 		};
 	};
 	isSnippetsEnabled?: boolean;
@@ -42,7 +47,7 @@ export async function getAllExtensionsFromVSCode(): Promise<{
 
 	for (const ext of vscode.extensions.all) {
 		// Read package.json instead of accessing it from extension because it caches results and we need it in real-time.
-		const fileContent = await fs.promises.readFile(path.join(ext.extensionPath, 'package.json'), 'utf8');
+		const fileContent = await fs.promises.readFile(path.join(ext.extensionPath, 'package.json'), 'utf-8');
 		const packageJSON = JSON.parse(fileContent);
 
 		if (!packageJSON.contributes) {
@@ -61,7 +66,7 @@ export async function getAllExtensionsFromVSCode(): Promise<{
 			path: ext.extensionPath,
 			description: `${ext.id} (${isBuiltin ? 'built-in' : 'installed'}) ${emoji}`,
 			name,
-			packageJSON
+			packageJSON,
 		};
 
 		if (packageJSON.contributes.snippets) {
@@ -80,6 +85,6 @@ export async function getAllExtensionsFromVSCode(): Promise<{
 		enabled: enabledExtensions,
 		disabled: disabledExtensions,
 		isAllDisabled: disabledExtensions.length === allExtensions.length,
-		isAllEnabled: enabledExtensions.length === allExtensions.length
+		isAllEnabled: enabledExtensions.length === allExtensions.length,
 	};
 }

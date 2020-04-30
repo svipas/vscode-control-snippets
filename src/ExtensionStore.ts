@@ -3,7 +3,7 @@ import { ExtensionData } from './extension';
 
 enum ExtensionStoreKey {
 	VSCODE_VERSION = 'vscode_version',
-	DISABLED_EXTENSIONS = 'disabled_extensions'
+	DISABLED_EXTENSIONS = 'disabled_extensions',
 }
 
 export class ExtensionStore {
@@ -26,11 +26,11 @@ export class ExtensionStore {
 	}
 
 	findExtensionById(id: string): ExtensionData | undefined {
-		return this.disabledExtensions?.find(ext => ext.id === id);
+		return this.disabledExtensions?.find((ext) => ext.id === id);
 	}
 
 	async saveDisabledExtensions(extensions: ExtensionData[]): Promise<void> {
-		const disabledExtensionsId: Pick<ExtensionData, 'id'>[] = extensions.map(ext => ({ id: ext.id }));
+		const disabledExtensionsId: Pick<ExtensionData, 'id'>[] = extensions.map((ext) => ({ id: ext.id }));
 		await this.globalState.update(ExtensionStoreKey.DISABLED_EXTENSIONS, disabledExtensionsId);
 	}
 
