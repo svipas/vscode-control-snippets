@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as sinon from 'sinon';
 import { disableSnippetForExtension, enableSnippetForExtension } from '../../snippets';
 
-describe('snippets', () => {
+suite('snippets', () => {
 	const writeFileFake = sinon.fake();
 	const pathJoinFake = sinon.fake(() => '');
 	const extension: {
@@ -24,7 +24,7 @@ describe('snippets', () => {
 		extension.packageJSON.contributes = {};
 	});
 
-	describe('disableSnippetForExtension()', () => {
+	suite('disableSnippetForExtension()', () => {
 		it('should throw if snippet is already disabled', async () => {
 			extension.packageJSON.contributes.snippets_disabled = [];
 			try {
@@ -48,7 +48,7 @@ describe('snippets', () => {
 		});
 	});
 
-	describe('enableSnippetForExtension()', () => {
+	suite('enableSnippetForExtension()', () => {
 		it('should throw if snippet is already enabled', async () => {
 			extension.packageJSON.contributes.snippets = [];
 			try {
