@@ -81,10 +81,10 @@ export function deactivate() {}
  */
 async function openControlSnippets(cancellationToken?: vscode.CancellationToken): Promise<boolean> {
 	const extensions = await getAllExtensionsFromVSCode();
-	const quickPickItems: vscode.QuickPickItem[] = extensions.all.map(ext => ({
+	const quickPickItems: vscode.QuickPickItem[] = extensions.all.map((ext) => ({
 		label: ext.name,
 		description: ext.description,
-		picked: ext.isSnippetsEnabled
+		picked: ext.isSnippetsEnabled,
 	}));
 
 	const selectedQuickPickValues = await vscode.window.showQuickPick(
@@ -93,7 +93,7 @@ async function openControlSnippets(cancellationToken?: vscode.CancellationToken)
 			canPickMany: true,
 			ignoreFocusOut: true,
 			matchOnDescription: true,
-			placeHolder: 'Select extension whose snippets to disable or enable'
+			placeHolder: 'Select extension whose snippets to disable or enable',
 		},
 		cancellationToken
 	);
@@ -113,7 +113,7 @@ async function openControlSnippets(cancellationToken?: vscode.CancellationToken)
 		}
 
 		for (const ext of extensions.enabled) {
-			await enableSnippetForExtension(ext);
+			await disableSnippetForExtension(ext);
 		}
 
 		return true;
@@ -128,7 +128,7 @@ async function openControlSnippets(cancellationToken?: vscode.CancellationToken)
 
 	// Only selected values from quick pick.
 	for (const value of selectedQuickPickValues) {
-		const ext = extensions.all.find(ext => ext.id === getExtensionIdFromText(value.description));
+		const ext = extensions.all.find((ext) => ext.id === getExtensionIdFromText(value.description));
 		if (!ext) {
 			continue;
 		}
@@ -146,7 +146,7 @@ async function openControlSnippets(cancellationToken?: vscode.CancellationToken)
 
 	// Disable extensions by checking difference between enabled extensions.
 	for (const ext of extensions.enabled) {
-		const isEnabledExtensionFromQuickPick = enabledExtensions.find(val => val.id === ext.id);
+		const isEnabledExtensionFromQuickPick = enabledExtensions.find((val) => val.id === ext.id);
 		if (isEnabledExtensionFromQuickPick) {
 			continue;
 		}
