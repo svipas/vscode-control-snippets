@@ -1,5 +1,13 @@
 ## [Unreleased]
 
+## 1.8.0 (April 30, 2020)
+
+- Format project with Prettier 2.
+- Rename `main.test.ts` to `extension.test.ts`.
+- Fix wrong method usage if nothing was selected in the picker.
+- Throw error if snippet is already disabled/enabled while disabling/enabling it.
+- Create tests for disabling/enabling snippets.
+
 ## 1.7.6 (April 29, 2020)
 
 - Change indentation to tabs.
