@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## 1.8.1 (May 17, 2020)
+
+- Reformat project with new settings.
+- Update image.
+- Update all dependencies.
+
 ## 1.8.0 (April 30, 2020)
 
 - Format project with Prettier 2.
