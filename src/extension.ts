@@ -1,6 +1,6 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as vscode from 'vscode';
+import * as fs from "fs";
+import * as path from "path";
+import * as vscode from "vscode";
 
 interface Snippet {
 	language: string;
@@ -25,12 +25,12 @@ export interface ExtensionData {
 }
 
 export function getExtensionIdFromText(text?: string): string | undefined {
-	if (text?.includes('built-in')) {
-		return text.slice(0, text.indexOf('(built-in)') - 1);
+	if (text?.includes("built-in")) {
+		return text.slice(0, text.indexOf("(built-in)") - 1);
 	}
 
-	if (text?.includes('installed')) {
-		return text.slice(0, text.indexOf('(installed)') - 1);
+	if (text?.includes("installed")) {
+		return text.slice(0, text.indexOf("(installed)") - 1);
 	}
 }
 
@@ -47,24 +47,33 @@ export async function getAllExtensionsFromVSCode(): Promise<{
 
 	for (const ext of vscode.extensions.all) {
 		// Read package.json instead of accessing it from extension because it caches results and we need it in real-time.
-		const fileContent = await fs.promises.readFile(path.join(ext.extensionPath, 'package.json'), 'utf-8');
+		const fileContent = await fs.promises.readFile(
+			path.join(ext.extensionPath, "package.json"),
+			"utf-8"
+		);
 		const packageJSON = JSON.parse(fileContent);
 
 		if (!packageJSON.contributes) {
 			continue;
 		}
 
-		const isBuiltin = packageJSON.publisher === 'vscode';
-		const emoji = ext.extensionKind === vscode.ExtensionKind.UI ? '🔋' : '🔌';
+		const isBuiltin = packageJSON.publisher === "vscode";
+		const emoji = ext.extensionKind === vscode.ExtensionKind.UI ? "🔋" : "🔌";
 		let name = packageJSON.name;
-		if (!isBuiltin && packageJSON.displayName && packageJSON.displayName !== '%displayName%') {
+		if (
+			!isBuiltin &&
+			packageJSON.displayName &&
+			packageJSON.displayName !== "%displayName%"
+		) {
 			name = packageJSON.displayName;
 		}
 
 		const extension: ExtensionData = {
 			id: ext.id,
 			path: ext.extensionPath,
-			description: `${ext.id} (${isBuiltin ? 'built-in' : 'installed'}) ${emoji}`,
+			description: `${ext.id} (${
+				isBuiltin ? "built-in" : "installed"
+			}) ${emoji}`,
 			name,
 			packageJSON,
 		};

@@ -1,8 +1,10 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import { ExtensionData } from './extension';
+import * as fs from "fs";
+import * as path from "path";
+import { ExtensionData } from "./extension";
 
-export async function disableSnippetForExtension(extension: ExtensionData): Promise<void> {
+export async function disableSnippetForExtension(
+	extension: ExtensionData
+): Promise<void> {
 	const { contributes } = extension.packageJSON;
 
 	if (contributes.snippets_disabled) {
@@ -14,7 +16,9 @@ export async function disableSnippetForExtension(extension: ExtensionData): Prom
 	await savePackageJSON(extension);
 }
 
-export async function enableSnippetForExtension(extension: ExtensionData): Promise<void> {
+export async function enableSnippetForExtension(
+	extension: ExtensionData
+): Promise<void> {
 	const { contributes } = extension.packageJSON;
 
 	if (contributes.snippets) {
@@ -27,5 +31,8 @@ export async function enableSnippetForExtension(extension: ExtensionData): Promi
 }
 
 function savePackageJSON(extension: ExtensionData): Promise<void> {
-	return fs.promises.writeFile(path.join(extension.path, 'package.json'), JSON.stringify(extension.packageJSON));
+	return fs.promises.writeFile(
+		path.join(extension.path, "package.json"),
+		JSON.stringify(extension.packageJSON)
+	);
 }

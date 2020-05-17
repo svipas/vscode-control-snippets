@@ -1,10 +1,17 @@
-import * as vscode from 'vscode';
-import { ExtensionData, getAllExtensionsFromVSCode, getExtensionIdFromText } from './extension';
-import { ExtensionStore } from './ExtensionStore';
-import { disableSnippetForExtension, enableSnippetForExtension } from './snippets';
+import * as vscode from "vscode";
+import {
+	ExtensionData,
+	getAllExtensionsFromVSCode,
+	getExtensionIdFromText,
+} from "./extension";
+import { ExtensionStore } from "./ExtensionStore";
+import {
+	disableSnippetForExtension,
+	enableSnippetForExtension,
+} from "./snippets";
 
-const EXTENSION_COMMAND = 'extension.control-snippets';
-const MODAL_RELOAD = 'Reload Window';
+const EXTENSION_COMMAND = "extension.control-snippets";
+const MODAL_RELOAD = "Reload Window";
 
 export async function activate(context: vscode.ExtensionContext) {
 	const store = new ExtensionStore(context.globalState);
@@ -18,8 +25,13 @@ export async function activate(context: vscode.ExtensionContext) {
 				}
 
 				// Save disabled extensions and current VS Code version to global store.
-				const disabledExtensions = (await getAllExtensionsFromVSCode()).disabled;
-				await Promise.all([store.saveDisabledExtensions(disabledExtensions), store.updateVSCodeVersion()]);
+				const {
+					disabled: disabledExtensions,
+				} = await getAllExtensionsFromVSCode();
+				await Promise.all([
+					store.saveDisabledExtensions(disabledExtensions),
+					store.updateVSCodeVersion(),
+				]);
 
 				const reloadModalResponse = await showReloadModal();
 				if (reloadModalResponse?.title === MODAL_RELOAD) {
@@ -79,7 +91,9 @@ export function deactivate() {}
 /**
  * @returns true if it should prompt reload modal, false otherwise.
  */
-async function openControlSnippets(cancellationToken?: vscode.CancellationToken): Promise<boolean> {
+async function openControlSnippets(
+	cancellationToken?: vscode.CancellationToken
+): Promise<boolean> {
 	const extensions = await getAllExtensionsFromVSCode();
 	const quickPickItems: vscode.QuickPickItem[] = extensions.all.map((ext) => ({
 		label: ext.name,
@@ -93,7 +107,7 @@ async function openControlSnippets(cancellationToken?: vscode.CancellationToken)
 			canPickMany: true,
 			ignoreFocusOut: true,
 			matchOnDescription: true,
-			placeHolder: 'Select extension whose snippets to disable or enable',
+			placeHolder: "Select extension whose snippets to disable or enable",
 		},
 		cancellationToken
 	);
@@ -120,7 +134,10 @@ async function openControlSnippets(cancellationToken?: vscode.CancellationToken)
 	}
 
 	// All extensions snippets are already enabled.
-	if (selectedQuickPickValues.length === extensions.all.length && extensions.isAllEnabled) {
+	if (
+		selectedQuickPickValues.length === extensions.all.length &&
+		extensions.isAllEnabled
+	) {
 		return false;
 	}
 
@@ -128,7 +145,9 @@ async function openControlSnippets(cancellationToken?: vscode.CancellationToken)
 
 	// Only selected values from quick pick.
 	for (const value of selectedQuickPickValues) {
-		const ext = extensions.all.find((ext) => ext.id === getExtensionIdFromText(value.description));
+		const ext = extensions.all.find((ext) => {
+			return ext.id === getExtensionIdFromText(value.description);
+		});
 		if (!ext) {
 			continue;
 		}
@@ -146,7 +165,9 @@ async function openControlSnippets(cancellationToken?: vscode.CancellationToken)
 
 	// Disable extensions by checking difference between enabled extensions.
 	for (const ext of extensions.enabled) {
-		const isEnabledExtensionFromQuickPick = enabledExtensions.find((val) => val.id === ext.id);
+		const isEnabledExtensionFromQuickPick = enabledExtensions.find((val) => {
+			return val.id === ext.id;
+		});
 		if (isEnabledExtensionFromQuickPick) {
 			continue;
 		}
@@ -159,20 +180,23 @@ async function openControlSnippets(cancellationToken?: vscode.CancellationToken)
 }
 
 function reloadWindow() {
-	vscode.commands.executeCommand('workbench.action.reloadWindow');
+	vscode.commands.executeCommand("workbench.action.reloadWindow");
 }
 
 function showReloadModal() {
 	return vscode.window.showInformationMessage(
-		'To disable or enable snippets from extensions reload is required.',
+		"To disable or enable snippets from extensions reload is required.",
 		{ modal: true },
-		...([{ title: 'Cancel', isCloseAffordance: true }, { title: MODAL_RELOAD }] as vscode.MessageItem[])
+		...([
+			{ title: "Cancel", isCloseAffordance: true },
+			{ title: MODAL_RELOAD },
+		] as vscode.MessageItem[])
 	);
 }
 
 function showReloadWarning() {
 	return vscode.window.showWarningMessage(
-		'Reload or restart of VS Code is required after disable or enable snippets from extensions to take effect.',
+		"Reload or restart of VS Code is required after disable or enable snippets from extensions to take effect.",
 		{ modal: false },
 		{ title: MODAL_RELOAD } as vscode.MessageItem
 	);
