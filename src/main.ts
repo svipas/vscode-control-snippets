@@ -86,8 +86,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	}
 }
 
-export function deactivate() {}
-
 /**
  * @returns true if it should prompt reload modal, false otherwise.
  */

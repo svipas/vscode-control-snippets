@@ -8,11 +8,11 @@ enum ExtensionStoreKey {
 
 export class ExtensionStore {
 	readonly disabledExtensions?: ExtensionData[];
-	private readonly globalState: vscode.ExtensionContext["globalState"];
-	private isNewVSCodeVersion?: boolean;
+	private readonly _globalState: vscode.ExtensionContext["globalState"];
+	private _isNewVSCodeVersion?: boolean;
 
 	constructor(globalState: vscode.ExtensionContext["globalState"]) {
-		this.globalState = globalState;
+		this._globalState = globalState;
 		this.disabledExtensions = globalState.get<ExtensionData[]>(
 			ExtensionStoreKey.DISABLED_EXTENSIONS
 		);
@@ -24,12 +24,14 @@ export class ExtensionStore {
 			vscodeVersionFromStorage &&
 			vscodeVersionFromStorage !== vscode.version
 		) {
-			this.isNewVSCodeVersion = true;
+			this._isNewVSCodeVersion = true;
 		}
 	}
 
 	get shouldDisableExtensions(): boolean {
-		return vscode.env.appName.includes("Insiders") || !!this.isNewVSCodeVersion;
+		return (
+			vscode.env.appName.includes("Insiders") || !!this._isNewVSCodeVersion
+		);
 	}
 
 	findExtensionById(id: string): ExtensionData | undefined {
@@ -41,14 +43,14 @@ export class ExtensionStore {
 			ExtensionData,
 			"id"
 		>[] = extensions.map((ext) => ({ id: ext.id }));
-		await this.globalState.update(
+		await this._globalState.update(
 			ExtensionStoreKey.DISABLED_EXTENSIONS,
 			disabledExtensionsId
 		);
 	}
 
 	async updateVSCodeVersion(): Promise<void> {
-		await this.globalState.update(
+		await this._globalState.update(
 			ExtensionStoreKey.VSCODE_VERSION,
 			vscode.version
 		);
