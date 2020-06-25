@@ -4,7 +4,7 @@
 	"description": "Disable or enable VS Code's built-in snippets and manually installed snippets from extensions.",
 	"version": "1.8.1",
 	"publisher": "svipas",
-	"main": "./out/main.js",
+	"main": "./dist/main.js",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/svipas/vscode-control-snippets.git"
@@ -36,12 +36,11 @@
 		]
 	},
 	"scripts": {
+		"build": "webpack --mode production",
+		"pretest": "tsc -p ./ && yarn build",
+		"test": "node ./out/test/run-test.js",
 		"vscode:publish": "vsce publish --yarn",
-		"vscode:prepublish": "yarn run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "yarn compile",
-		"test": "node ./out/test/run-test.js"
+		"vscode:prepublish": "yarn build"
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.2",
@@ -102,5 +101,10 @@
 		"yaml",
 		"yml",
 		"java"
-	]
+	],
+	"dependencies": {
+		"ts-loader": "^7.0.5",
+		"webpack": "^4.43.0",
+		"webpack-cli": "^3.3.12"
+	}
 }

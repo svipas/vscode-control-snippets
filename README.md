@@ -36,12 +36,3 @@ If you're connected to a remote machine you probably will not see all extensions
 ## Contributing
 
 Feel free to open issues or PRs!
-
-<details>
-<summary><strong>Debug extension</strong></summary>
-
-- Open this repository inside VS Code.
-- Run `Debug: Select and Start Debugging` from command palette or open debug sidebar.
-- Select `Run Extension`.
-
-</details>

@@ -1,11 +1,10 @@
 .vscode/**
 .vscode-test/**
-out/test/**
+images/**
+out/**
+node_modules/**
 src/**
 .gitignore
-**/tsconfig.json
-**/tslint.json
-**/*.map
-**/*.ts
-images/**
 azure-pipelines.yml
+tsconfig.json
+webpack.config.js
