@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## 1.9.1 (July 7, 2020)
+
+- Update all dependencies.
+- Change project file names convention.
+
 ## 1.9.0 (June 25, 2020)
 
 - Update all dependencies.
