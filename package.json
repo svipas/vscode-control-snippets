@@ -38,7 +38,7 @@
 	"scripts": {
 		"build": "webpack --mode production",
 		"pretest": "tsc -p ./ && yarn build",
-		"test": "node ./out/test/run-test.js",
+		"test": "node ./out/test/runTest.js",
 		"vscode:publish": "vsce publish --yarn",
 		"vscode:prepublish": "yarn build"
 	},
